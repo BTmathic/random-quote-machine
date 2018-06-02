@@ -4,7 +4,10 @@ import './styles/styles.scss';
 // We simply provide our own quotes since multiple APIs have broken in just a year
 // and there is no guarantee a free API will always be maintained anyway. These were
 // taken from https://www.goodreads.com/quotes
-const quotes = [{
+
+// Currently using the FCC API as it is hosted on Github so hopefully will not disappear,
+// but not deleting this just in case!
+let quotes = [{
   quote: "Don't cry because it's over, smile because it happened.",
   author: 'Dr. Seuss'
 }, {
@@ -97,7 +100,17 @@ const quotes = [{
   },
 ];
 
-main();
+fetch('https://gist.githubusercontent.com/camperbot/5a022b72e96c4c9585c32bf6a75f62d9/raw/e3c6895ce42069f0ee7e991229064f167fe8ccdc/quotes.json')
+  .then((response) => {
+    return response.json();
+  })
+  .then((json) => {
+    quotes = json.quotes;
+    main();
+  })
+  .catch((error) => {
+    console.log('Something went wrong... ', error)
+  });
 
 function main() {
   setQuote();
@@ -121,15 +134,18 @@ function setColour() {
   document.getElementById('twitter-icon').style.backgroundColor = newColour;
   document.getElementById('text').style.color = newColour;
   document.getElementById('author').style.color = newColour;
-  document.getElementById('new-quote-button').style.color = newColour;
+  document.getElementById('new-quote').style.color = newColour;
   document.getElementById('new-quote-button').style.border = '2px solid ' + newColour;
 }
 
 function setQuote() {
-  const nextQuote = Math.floor(Math.random() * quotes.length);
-  const quote = quotes[nextQuote].quote;
-  const author = quotes[nextQuote].author;
-  document.getElementById('text').innerHTML = quote;
-  document.getElementById('author').innerHTML = author;
-  document.getElementById('tweet-quote').href = 'https://twitter.com/intent/tweet?hashtags=quotes&related=freecodecamp&text=' + encodeURIComponent('"' + quote.slice(3,quote.length-5) + '" ') + author;  
+  fetch('https://gist.githubusercontent.com/camperbot/5a022b72e96c4c9585c32bf6a75f62d9/raw/e3c6895ce42069f0ee7e991229064f167fe8ccdc/quotes.json')
+    .then((response) => {
+      const nextQuote = Math.floor(Math.random() * quotes.length);
+      const quote = quotes[nextQuote].quote;
+      const author = quotes[nextQuote].author;
+      document.getElementById('text').innerHTML = quote;
+      document.getElementById('author').innerHTML = author;
+      document.getElementById('tweet-quote').href = 'https://twitter.com/intent/tweet?hashtags=quotes&related=freecodecamp&text=' + encodeURIComponent('"' + quote.slice(3, quote.length - 5) + '" ') + author;
+    });
 }
